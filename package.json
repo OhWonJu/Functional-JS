@@ -1,0 +1,13 @@
+{
+  "scripts": {
+    "test": "mocha babel-node utils.spec.js",
+    "start": "babel-node index.js",
+    "dev": "nodemon --exec babel-node index.js"
+  },
+  "dependencies": {
+    "@babel/core": "^7.17.5",
+    "@babel/node": "^7.16.8",
+    "@babel/preset-env": "^7.16.11",
+    "underscore": "^1.13.2"
+  }
+}
