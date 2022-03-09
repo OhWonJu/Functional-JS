@@ -156,7 +156,6 @@ log("클로저의 실용 사례");
 // 클로저가 강력하고, 실용적인 순간
 // 1. 이전 상황을 나중에 일어날 상황과 이어 나갈 때
 // 2. 함수로 함수를 만들거나 부분 적용을 할 때
-
 const userList = document.createElement("div");
 userList.className = "user-list";
 
@@ -172,12 +171,100 @@ $(".user-list").append(
   _.map(users, function (user) {
     var button = $("<button>").text(user.name);
     button.click(() => {
-      if (confirm(user.name + "님을 팔로잉 하시겠습니까?")) follow(user);
+      if (confirm(user.name + "님을 팔로잉 하시겠습니까?")) follow(user); // 클릭할 때 마다 이전 상태, user 정보를 이어나간다.
     });
-    return button;
+    return button; // button을 통해 user 정보를 기억하는 클로저 follow가 생김
   })
 );
 
 function follow(user) {
   alert("이제 " + user.name + "님의 소식을 보실 수 있습니다.");
+} // 클로저였다가 사라지는 ...
+
+log("\n---------");
+log("고차 함수");
+// 고차 함수?
+// 다시 정리하자면 고차 함수란 함수를 다루는 함수를 말한다!
+// 1. 함수를 인자로 받아 대신 실행하는 함수
+// 2. 함수를 리턴하는 함수
+// 3. 함수를 인자로 받아 또 다른 함수를 리턴하는 함수
+
+// applicative function (1)
+// 함수를 인자로 받아 내부에서 실행하면서, 받아 둔 함수에 자신이 알고 있는 값을
+// 인자로 전달하는 형태
+// map, filter, reduce와 같은것... //
+
+// 함수를 리턴하는 함수 (2)
+function constant(val) {
+  return function () {
+    return val;
+  };
 }
+
+var always10 = constant(10);
+log(always10());
+log(always10());
+log(always10());
+// 클로저를 이용해 인자로 받은 값을 기억해둔다.. 많이 사용되는 패턴이라 한다.
+// 무슨 의미가 있을까...? 그저 상수형일뿐이디/
+
+// 함수를 인자로 받고 함수를 리턴하는(3)
+function add(val1, val2) {
+  return val1 + val2;
+}
+function mod(val1, val2) {
+  return val1 / val2;
+}
+
+function callWith(val1) {
+  // val1을 기억하는 클로저를 생성해서 리턴
+  return function (val2, func) {
+    // 함수를 대신 실행해주고, 함수를 반환?
+    return func(val1, val2);
+  };
+}
+
+var callWith10 = callWith(10);
+log(callWith10(20, add));
+log(callWith(30)(20, mod));
+
+// callWith을 분리했기에 다른 타입의 데이터도 사용 가능..
+log(
+  callWith([1, 2, 3])(function (v) {
+    return v * 10;
+  }, _.map)
+);
+// map([1,2,3], iteratee)
+
+_.get = function (list, idx) {
+  return list[idx];
+};
+
+var callWithUsers = callWith([
+  { id: 2, name: "HA", age: 25 },
+  { id: 4, name: "PJ", age: 28 },
+  { id: 5, name: "JE", age: 27 },
+]);
+log(callWithUsers(2, _.get));
+log(
+  callWithUsers(function (user) {
+    return user.age > 25;
+  }, _.find)
+);
+log(
+  callWithUsers(function (user) {
+    return user.age > 25;
+  }, _.filter)
+);
+log(
+  callWithUsers(function (user) {
+    return user.age > 25;
+  }, _.some)
+);
+log(
+  callWithUsers(function (user) {
+    return user.age > 25;
+  }, _.every)
+);
+
+// 매끄니피쏀트!!!

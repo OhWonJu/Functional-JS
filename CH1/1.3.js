@@ -1,5 +1,4 @@
 // 함수형 자바스크립트의 실용성 2 //
-
 let users = [
   { id: 1, name: "ID", age: 32 },
   { id: 2, name: "HA", age: 25 },
@@ -303,4 +302,3 @@ log(_some([0, null, false]));
 log(_every([0, null, 2]));
 log(_every([{}, true, 2]));
 log(_every([0, null, -1]));
-
